@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Requests\OfficialReceiptsRequest;
-use App\Http\Requests\OfficialReceipts;
-use Illuminate\Http\Request;
+use App\Models\OfficialReceipts;
+use Illuminate\Http\JsonResponse;
 
 class OfficialReceiptsController extends Controller
 {
 
-    public function index()
+    public function index(): JsonResponse
     {
-        $data = OfficialReceipts::query()->get();
-        if($data->isEmpty()) {
+        $data = OfficialReceipts::all();
+        if ($data->isEmpty()) {
             return response()->json(['message' => 'No official receipts found.'], 404);
         }
         return response()->json([
@@ -23,9 +22,9 @@ class OfficialReceiptsController extends Controller
         ], 200);
     }
 
-    public function store(OfficialReceiptsRequest $request)
+    public function store(OfficialReceiptsRequest $request): JsonResponse
     {
-        $data = OfficialReceipts::query()->create($request->validated());
+        $data = OfficialReceipts::create($request->validated());
         return response()->json([
             'data' => $data,
             'message' => 'Official receipt created successfully.',
@@ -33,49 +32,43 @@ class OfficialReceiptsController extends Controller
         ], 201);
     }
 
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        $officialReceipt = OfficialReceipts::query()->find($id);
-        if ($officialReceipt === null) {
+        $data = OfficialReceipts::find($id);
+        if ($data === null) {
             return response()->json(['message' => 'Official receipt not found.'], 404);
         }
         return response()->json([
-            'data' => $officialReceipt,
+            'data' => $data,
             'message' => 'Official receipt retrieved successfully.',
             'status' => 'success',
         ], 200);
     }
 
-    public function update(OfficialReceiptsRequest $request, string $id)
+    public function update(OfficialReceiptsRequest $request, string $id): JsonResponse
     {
-        $validate = $request->validated();
-        $data = OfficialReceipts::query()->find($id);
-
-        if (! $data) {
-            return response()->json([
-                'message' => 'Official receipt not found',
-            ], 404);
+        $data = OfficialReceipts::find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Official receipt not found.'], 404);
         }
-        $data->update($validate);
-
+        $data->update($request->validated());
         return response()->json([
-            'message' => 'Official receipt updated successfully',
             'data' => $data->fresh(),
-        ], 201);
+            'message' => 'Official receipt updated successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        $data = OfficialReceipts::query()->find($id);
-        if (! $data) {
-            return response()->json([
-                'message' => 'Official receipt not found',
-            ], 404);
+        $data = OfficialReceipts::find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Official receipt not found.'], 404);
         }
         $data->delete();
-
         return response()->json([
-            'message' => 'Official receipt deleted successfully',
+            'message' => 'Official receipt deleted successfully.',
+            'status' => 'success',
         ], 200);
     }
 }

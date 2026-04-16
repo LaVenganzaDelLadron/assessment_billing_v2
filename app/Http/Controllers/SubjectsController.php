@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\SubjectRequest;
-use App\Http\Models\Subject;
-use Illuminate\Http\Request;
+use App\Http\Requests\SubjectsRequest;
+use App\Models\Subjects;
+use Illuminate\Http\JsonResponse;
 
 class SubjectsController extends Controller
 {
 
-    public function index()
+    public function index(): JsonResponse
     {
-        $data = Subject::query()->get();
-        if($data->isEmpty()) {
+        $data = Subjects::all();
+        if ($data->isEmpty()) {
             return response()->json(['message' => 'No subjects found.'], 404);
         }
         return response()->json([
@@ -22,9 +22,9 @@ class SubjectsController extends Controller
         ], 200);
     }
 
-    public function store(SubjectRequest $request)
+    public function store(SubjectsRequest $request): JsonResponse
     {
-        $data = Subject::query()->create($request->validated());
+        $data = Subjects::create($request->validated());
         return response()->json([
             'data' => $data,
             'message' => 'Subject created successfully.',
@@ -32,9 +32,9 @@ class SubjectsController extends Controller
         ], 201);
     }
 
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        $data = Subject::query()->find($id);
+        $data = Subjects::find($id);
         if ($data === null) {
             return response()->json(['message' => 'Subject not found.'], 404);
         }
@@ -45,9 +45,9 @@ class SubjectsController extends Controller
         ], 200);
     }
 
-    public function update(SubjectRequest $request, string $id)
+    public function update(SubjectsRequest $request, string $id): JsonResponse
     {
-        $data = Subject::query()->find($id);
+        $data = Subjects::find($id);
         if ($data === null) {
             return response()->json(['message' => 'Subject not found.'], 404);
         }
@@ -59,9 +59,9 @@ class SubjectsController extends Controller
         ], 200);
     }
 
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        $data = Subject::query()->find($id);
+        $data = Subjects::find($id);
         if ($data === null) {
             return response()->json(['message' => 'Subject not found.'], 404);
         }

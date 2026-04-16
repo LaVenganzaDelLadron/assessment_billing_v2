@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\EnrollmentRequest;
-use App\Http\Models\Enrollment;
-use Illuminate\Http\Request;
+use App\Http\Requests\EnrollmentsRequest;
+use App\Models\Enrollments;
+use Illuminate\Http\JsonResponse;
 
 class EnrollmentsController extends Controller
 {
 
-    public function index()
+    public function index(): JsonResponse
     {
-        $data = Enrollment::query()->get();
-        if($data->isEmpty()) {
+        $data = Enrollments::all();
+        if ($data->isEmpty()) {
             return response()->json(['message' => 'No enrollments found.'], 404);
         }
         return response()->json([
@@ -22,9 +22,9 @@ class EnrollmentsController extends Controller
         ], 200);
     }
 
-    public function store(EnrollmentRequest $request)
+    public function store(EnrollmentsRequest $request): JsonResponse
     {
-        $data = Enrollment::query()->create($request->validated());
+        $data = Enrollments::create($request->validated());
         return response()->json([
             'data' => $data,
             'message' => 'Enrollment created successfully.',
@@ -33,49 +33,43 @@ class EnrollmentsController extends Controller
     }
 
 
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        $data = Enrollment::query()->find($id);
+        $data = Enrollments::find($id);
         if ($data === null) {
             return response()->json(['message' => 'Enrollment not found.'], 404);
         }
         return response()->json([
-            'data' => $enrollment,
+            'data' => $data,
             'message' => 'Enrollment retrieved successfully.',
             'status' => 'success',
         ], 200);
     }
 
-    public function update(EnrollmentRequest $request, string $id)
+    public function update(EnrollmentsRequest $request, string $id): JsonResponse
     {
-        $validate = $request->validated();
-        $data = Enrollment::query()->find($id);
-
-        if (! $data) {
-            return response()->json([
-                'message' => 'Enrollment not found',
-            ], 404);
+        $data = Enrollments::find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Enrollment not found.'], 404);
         }
-        $data->update($validate);
-
+        $data->update($request->validated());
         return response()->json([
-            'message' => 'Enrollment updated successfully',
             'data' => $data->fresh(),
-        ], 201);
+            'message' => 'Enrollment updated successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        $data = Enrollment::query()->find($id);
-        if (! $data) {
-            return response()->json([
-                'message' => 'Enrollment not found',
-            ], 404);
+        $data = Enrollments::find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Enrollment not found.'], 404);
         }
         $data->delete();
-
         return response()->json([
-            'message' => 'Enrollment deleted successfully',
+            'message' => 'Enrollment deleted successfully.',
+            'status' => 'success',
         ], 200);
     }
 }

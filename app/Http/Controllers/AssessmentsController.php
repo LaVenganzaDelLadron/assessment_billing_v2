@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers;
 
-
-use App\Http\Requests\AssessmentRequest;
-use App\Http\Models\Assessment;
-use Illuminate\Http\Request;
+use App\Http\Requests\AssessmentsRequest;
+use App\Models\Assessments;
+use Illuminate\Http\JsonResponse;
 
 class AssessmentsController extends Controller
 {
 
-    public function index()
+    public function index(): JsonResponse
     {
-        $data = Assessment::query()->get();
-        if($data->isEmpty()) {
+        $data = Assessments::all();
+        if ($data->isEmpty()) {
             return response()->json(['message' => 'No assessments found.'], 404);
         }
         return response()->json([
@@ -23,9 +22,9 @@ class AssessmentsController extends Controller
         ], 200);
     }
 
-    public function store(AssessmentRequest $request)
+    public function store(AssessmentsRequest $request): JsonResponse
     {
-        $data = Assessment::query()->create($request->validated());
+        $data = Assessments::create($request->validated());
         return response()->json([
             'data' => $data,
             'message' => 'Assessment created successfully.',
@@ -33,49 +32,43 @@ class AssessmentsController extends Controller
         ], 201);
     }
 
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        $assessment = Assessment::query()->find($id);
-        if ($assessment === null) {
+        $data = Assessments::find($id);
+        if ($data === null) {
             return response()->json(['message' => 'Assessment not found.'], 404);
         }
         return response()->json([
-            'data' => $assessment,
+            'data' => $data,
             'message' => 'Assessment retrieved successfully.',
             'status' => 'success',
         ], 200);
     }
 
-    public function update(AssessmentRequest $request, string $id)
+    public function update(AssessmentsRequest $request, string $id): JsonResponse
     {
-        $validate = $request->validated();
-        $data = Assessment::query()->find($id);
-
-        if (! $data) {
-            return response()->json([
-                'message' => 'Assessment not found',
-            ], 404);
+        $data = Assessments::find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Assessment not found.'], 404);
         }
-        $data->update($validate);
-
+        $data->update($request->validated());
         return response()->json([
-            'message' => 'Assessment updated successfully',
             'data' => $data->fresh(),
-        ], 201);
+            'message' => 'Assessment updated successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        $data = Assessment::query()->find($id);
-        if (! $data) {
-            return response()->json([
-                'message' => 'Assessment not found',
-            ], 404);
+        $data = Assessments::find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Assessment not found.'], 404);
         }
         $data->delete();
-
         return response()->json([
-            'message' => 'Assessment deleted successfully',
+            'message' => 'Assessment deleted successfully.',
+            'status' => 'success',
         ], 200);
     }
 }

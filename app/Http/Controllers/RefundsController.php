@@ -3,16 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RefundsRequest;
-use App\Http\Models\Refunds;
-use Illuminate\Http\Request;
+use App\Models\Refunds;
+use Illuminate\Http\JsonResponse;
 
 class RefundsController extends Controller
 {
 
-    public function index()
+    public function index(): JsonResponse
     {
-        $data = Refunds::query()->get();
-        if($data->isEmpty()) {
+        $data = Refunds::all();
+        if ($data->isEmpty()) {
             return response()->json(['message' => 'No refunds found.'], 404);
         }
         return response()->json([
@@ -22,9 +22,9 @@ class RefundsController extends Controller
         ], 200);
     }
 
-    public function store(RefundsRequest $request)
+    public function store(RefundsRequest $request): JsonResponse
     {
-        $data = Refunds::query()->create($request->validated());
+        $data = Refunds::create($request->validated());
         return response()->json([
             'data' => $data,
             'message' => 'Refund created successfully.',
@@ -32,9 +32,9 @@ class RefundsController extends Controller
         ], 201);
     }
 
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        $data = Refunds::query()->find($id);
+        $data = Refunds::find($id);
         if ($data === null) {
             return response()->json(['message' => 'Refund not found.'], 404);
         }
@@ -45,9 +45,9 @@ class RefundsController extends Controller
         ], 200);
     }
 
-    public function update(RefundsRequest $request, string $id)
+    public function update(RefundsRequest $request, string $id): JsonResponse
     {
-        $data = Refunds::query()->find($id);
+        $data = Refunds::find($id);
         if ($data === null) {
             return response()->json(['message' => 'Refund not found.'], 404);
         }
@@ -60,9 +60,9 @@ class RefundsController extends Controller
     }
 
 
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        $data = Refunds::query()->find($id);
+        $data = Refunds::find($id);
         if ($data === null) {
             return response()->json(['message' => 'Refund not found.'], 404);
         }

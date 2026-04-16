@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PaymentMethodsRequest;
-use App\Http\Models\PaymentMethods;
-use Illuminate\Http\Request;
+use App\Models\PaymentMethods;
+use Illuminate\Http\JsonResponse;
 
 class PaymentMethodsController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
-        $data = PaymentMethods::query()->get();
-        if($data->isEmpty()) {
+        $data = PaymentMethods::all();
+        if ($data->isEmpty()) {
             return response()->json(['message' => 'No payment methods found.'], 404);
         }
         return response()->json([
@@ -21,9 +21,9 @@ class PaymentMethodsController extends Controller
         ], 200);
     }
 
-    public function store(PaymentMethodsRequest $request)
+    public function store(PaymentMethodsRequest $request): JsonResponse
     {
-        $data = PaymentMethods::query()->create($request->validated());
+        $data = PaymentMethods::create($request->validated());
         return response()->json([
             'data' => $data,
             'message' => 'Payment method created successfully.',
@@ -31,9 +31,9 @@ class PaymentMethodsController extends Controller
         ], 201);
     }
 
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        $data = PaymentMethods::query()->find($id);
+        $data = PaymentMethods::find($id);
         if ($data === null) {
             return response()->json(['message' => 'Payment method not found.'], 404);
         }
@@ -44,9 +44,9 @@ class PaymentMethodsController extends Controller
         ], 200);
     }
 
-    public function update(PaymentMethodsRequest $request, string $id)
+    public function update(PaymentMethodsRequest $request, string $id): JsonResponse
     {
-        $data = PaymentMethods::query()->find($id);
+        $data = PaymentMethods::find($id);
         if ($data === null) {
             return response()->json(['message' => 'Payment method not found.'], 404);
         }
@@ -58,9 +58,9 @@ class PaymentMethodsController extends Controller
         ], 200);
     }
 
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        $data = PaymentMethods::query()->find($id);
+        $data = PaymentMethods::find($id);
         if ($data === null) {
             return response()->json(['message' => 'Payment method not found.'], 404);
         }

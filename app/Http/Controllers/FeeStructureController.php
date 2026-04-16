@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\FeeStructureRequest;
-use App\Http\Models\FeeStructure;
-use Illuminate\Http\Request;
+use App\Models\FeeStructure;
+use Illuminate\Http\JsonResponse;
 
 class FeeStructureController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
-        $data = FeeStructure::query()->get();
-        if($data->isEmpty()) {
+        $data = FeeStructure::all();
+        if ($data->isEmpty()) {
             return response()->json(['message' => 'No fee structures found.'], 404);
         }
         return response()->json([
@@ -21,9 +21,9 @@ class FeeStructureController extends Controller
         ], 200);
     }
 
-    public function store(FeeStructureRequest $request)
+    public function store(FeeStructureRequest $request): JsonResponse
     {
-        $data = FeeStructure::query()->create($request->validated());
+        $data = FeeStructure::create($request->validated());
         return response()->json([
             'data' => $data,
             'message' => 'Fee structure created successfully.',
@@ -31,49 +31,43 @@ class FeeStructureController extends Controller
         ], 201);
     }
 
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        $feeStructure = FeeStructure::query()->find($id);
-        if ($feeStructure === null) {
+        $data = FeeStructure::find($id);
+        if ($data === null) {
             return response()->json(['message' => 'Fee structure not found.'], 404);
         }
         return response()->json([
-            'data' => $feeStructure,
+            'data' => $data,
             'message' => 'Fee structure retrieved successfully.',
             'status' => 'success',
         ], 200);
     }
 
-    public function update(FeeStructureRequest $request, string $id)
+    public function update(FeeStructureRequest $request, string $id): JsonResponse
     {
-        $validate = $request->validated();
-        $data = FeeStructure::query()->find($id);
-
-        if (! $data) {
-            return response()->json([
-                'message' => 'Fee structure not found',
-            ], 404);
+        $data = FeeStructure::find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Fee structure not found.'], 404);
         }
-        $data->update($validate);
-
+        $data->update($request->validated());
         return response()->json([
-            'message' => 'Fee structure updated successfully',
             'data' => $data->fresh(),
-        ], 201);
+            'message' => 'Fee structure updated successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        $data = FeeStructure::query()->find($id);
-        if (! $data) {
-            return response()->json([
-                'message' => 'Fee structure not found',
-            ], 404);
+        $data = FeeStructure::find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Fee structure not found.'], 404);
         }
         $data->delete();
-
         return response()->json([
-            'message' => 'Fee structure deleted successfully',
+            'message' => 'Fee structure deleted successfully.',
+            'status' => 'success',
         ], 200);
     }
 }

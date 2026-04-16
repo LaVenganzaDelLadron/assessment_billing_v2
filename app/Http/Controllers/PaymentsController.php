@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PaymentsRequest;
-use App\Http\Models\Payments;
-use Illuminate\Http\Request;
+use App\Models\Payments;
+use Illuminate\Http\JsonResponse;
 
 class PaymentsController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
-        $data = Payments::query()->get();
-        if($data->isEmpty()) {
+        $data = Payments::all();
+        if ($data->isEmpty()) {
             return response()->json(['message' => 'No payments found.'], 404);
         }
         return response()->json([
@@ -21,9 +21,9 @@ class PaymentsController extends Controller
         ], 200);
     }
 
-    public function store(PaymentsRequest $request)
+    public function store(PaymentsRequest $request): JsonResponse
     {
-        $data = Payments::query()->create($request->validated());
+        $data = Payments::create($request->validated());
         return response()->json([
             'data' => $data,
             'message' => 'Payment created successfully.',
@@ -31,9 +31,9 @@ class PaymentsController extends Controller
         ], 201);
     }
 
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        $data = Payments::query()->find($id);
+        $data = Payments::find($id);
         if ($data === null) {
             return response()->json(['message' => 'Payment not found.'], 404);
         }
@@ -44,9 +44,9 @@ class PaymentsController extends Controller
         ], 200);
     }
 
-    public function update(PaymentsRequest $request, string $id)
+    public function update(PaymentsRequest $request, string $id): JsonResponse
     {
-        $data = Payments::query()->find($id);
+        $data = Payments::find($id);
         if ($data === null) {
             return response()->json(['message' => 'Payment not found.'], 404);
         }
@@ -58,9 +58,9 @@ class PaymentsController extends Controller
         ], 200);
     }
 
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        $data = Payments::query()->find($id);
+        $data = Payments::find($id);
         if ($data === null) {
             return response()->json(['message' => 'Payment not found.'], 404);
         }

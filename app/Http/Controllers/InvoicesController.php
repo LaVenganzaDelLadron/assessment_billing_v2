@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\InvoiceRequest;
-use App\Http\Models\Invoice;
-use Illuminate\Http\Request;
+use App\Http\Requests\InvoicesRequest;
+use App\Models\Invoices;
+use Illuminate\Http\JsonResponse;
 
 class InvoicesController extends Controller
 {
 
-    public function index()
+    public function index(): JsonResponse
     {
-        $data = Invoice::query()->get();
-        if($data->isEmpty()) {
+        $data = Invoices::all();
+        if ($data->isEmpty()) {
             return response()->json(['message' => 'No invoices found.'], 404);
         }
         return response()->json([
@@ -22,9 +22,9 @@ class InvoicesController extends Controller
         ], 200);
     }
 
-    public function store(InvoiceRequest $request)
+    public function store(InvoicesRequest $request): JsonResponse
     {
-        $data = Invoice::query()->create($request->validated());
+        $data = Invoices::create($request->validated());
         return response()->json([
             'data' => $data,
             'message' => 'Invoice created successfully.',
@@ -32,9 +32,9 @@ class InvoicesController extends Controller
         ], 201);
     }
 
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        $data = Invoice::query()->find($id);
+        $data = Invoices::find($id);
         if ($data === null) {
             return response()->json(['message' => 'Invoice not found.'], 404);
         }
@@ -45,36 +45,30 @@ class InvoicesController extends Controller
         ], 200);
     }
 
-    public function update(InvoiceRequest $request, string $id)
+    public function update(InvoicesRequest $request, string $id): JsonResponse
     {
-        $validate = $request->validated();
-        $data = Invoice::query()->find($id);
-
-        if (! $data) {
-            return response()->json([
-                'message' => 'Invoice not found',
-            ], 404);
+        $data = Invoices::find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Invoice not found.'], 404);
         }
-        $data->update($validate);
-
+        $data->update($request->validated());
         return response()->json([
-            'message' => 'Invoice updated successfully',
             'data' => $data->fresh(),
-        ], 201);
+            'message' => 'Invoice updated successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        $data = Invoice::query()->find($id);
-        if (! $data) {
-            return response()->json([
-                'message' => 'Invoice not found',
-            ], 404);
+        $data = Invoices::find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Invoice not found.'], 404);
         }
         $data->delete();
-
         return response()->json([
-            'message' => 'Invoice deleted successfully',
+            'message' => 'Invoice deleted successfully.',
+            'status' => 'success',
         ], 200);
     }
 }

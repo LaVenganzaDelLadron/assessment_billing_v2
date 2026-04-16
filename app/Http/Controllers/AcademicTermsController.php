@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Request\AcademicTermRequest;
-use App\Http\Models\AcademicTerms;
-use Illuminate\Http\Request;
+use App\Http\Requests\AcademicTermsRequest;
+use App\Models\AcademicTerms;
+use Illuminate\Http\JsonResponse;
 
 
 class AcademicTermsController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
-        $data = AcademicTerms::query()->get();
-        if($data->isEmpty()) {
+        $data = AcademicTerms::all();
+        if ($data->isEmpty()) {
             return response()->json(['message' => 'No academic terms found.'], 404);
         }
         return response()->json([
@@ -23,9 +23,9 @@ class AcademicTermsController extends Controller
     }
 
 
-    public function store(StoreAcademicTermRequest $request)
+    public function store(AcademicTermsRequest $request): JsonResponse
     {
-        $data = AcademicTerms::query()->create($request->validated());
+        $data = AcademicTerms::create($request->validated());
         return response()->json([
             'data' => $data,
             'message' => 'Academic term created successfully.',
@@ -34,9 +34,9 @@ class AcademicTermsController extends Controller
     }
 
 
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        $data = AcademicTerms::query()->find($id);
+        $data = AcademicTerms::find($id);
         if ($data === null) {
             return response()->json(['message' => 'Academic term not found.'], 404);
         }
@@ -48,37 +48,31 @@ class AcademicTermsController extends Controller
     }
 
 
-    public function update(AcademicTermRequest $request, string $id)
+    public function update(AcademicTermsRequest $request, string $id): JsonResponse
     {
-        $data = $request->validated();
-        $data = AcademicTerms::query()->find($id);
-
-        if (! $data) {
-            return response()->json([
-                'message' => 'data not found',
-            ], 404);
+        $data = AcademicTerms::find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Academic term not found.'], 404);
         }
-        $data->update($validate);
-
+        $data->update($request->validated());
         return response()->json([
-            'message' => 'updated successfully',
             'data' => $data->fresh(),
-        ], 201);
+            'message' => 'Academic term updated successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
 
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        $data = AcademicTerms::query()->find($id);
-        if (! $data) {
-            return response()->json([
-                'message' => 'data not found',
-            ], 404);
+        $data = AcademicTerms::find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Academic term not found.'], 404);
         }
         $data->delete();
-
         return response()->json([
-            'message' => 'deleted successfully',
+            'message' => 'Academic term deleted successfully.',
+            'status' => 'success',
         ], 200);
     }
 }

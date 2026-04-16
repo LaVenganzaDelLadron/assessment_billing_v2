@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProgramRequest;
-use App\Http\Models\Program;
-use Illuminate\Http\Request;
+use App\Http\Requests\ProgramsRequest;
+use App\Models\Programs;
+use Illuminate\Http\JsonResponse;
 
 class ProgramsController extends Controller
 {
 
-    public function index()
+    public function index(): JsonResponse
     {
-        $data = Program::query()->get();
-        if($data->isEmpty()) {
+        $data = Programs::all();
+        if ($data->isEmpty()) {
             return response()->json(['message' => 'No programs found.'], 404);
         }
         return response()->json([
@@ -22,9 +22,9 @@ class ProgramsController extends Controller
         ], 200);
     }
 
-    public function store(ProgramRequest $request)
+    public function store(ProgramsRequest $request): JsonResponse
     {
-        $data = Program::query()->create($request->validated());
+        $data = Programs::create($request->validated());
         return response()->json([
             'data' => $data,
             'message' => 'Program created successfully.',
@@ -32,9 +32,9 @@ class ProgramsController extends Controller
         ], 201);
     }
 
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        $data = Program::query()->find($id);
+        $data = Programs::find($id);
         if ($data === null) {
             return response()->json(['message' => 'Program not found.'], 404);
         }
@@ -45,9 +45,9 @@ class ProgramsController extends Controller
         ], 200);
     }
 
-    public function update(ProgramRequest $request, string $id)
+    public function update(ProgramsRequest $request, string $id): JsonResponse
     {
-        $data = Program::query()->find($id);
+        $data = Programs::find($id);
         if ($data === null) {
             return response()->json(['message' => 'Program not found.'], 404);
         }
@@ -59,9 +59,9 @@ class ProgramsController extends Controller
         ], 200);
     }
 
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        $data = Program::query()->find($id);
+        $data = Programs::find($id);
         if ($data === null) {
             return response()->json(['message' => 'Program not found.'], 404);
         }
