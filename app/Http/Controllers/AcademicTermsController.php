@@ -2,47 +2,83 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Request\AcademicTermRequest;
+use App\Http\Models\AcademicTerms;
 use Illuminate\Http\Request;
+
 
 class AcademicTermsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $data = AcademicTerms::query()->get();
+        if($data->isEmpty()) {
+            return response()->json(['message' => 'No academic terms found.'], 404);
+        }
+        return response()->json([
+            'data' => $data,
+            'message' => 'Academic terms retrieved successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+
+    public function store(StoreAcademicTermRequest $request)
     {
-        //
+        $data = AcademicTerms::query()->create($request->validated());
+        return response()->json([
+            'data' => $data,
+            'message' => 'Academic term created successfully.',
+            'status' => 'success',
+        ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
+
     public function show(string $id)
     {
-        //
+        $data = AcademicTerms::query()->find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Academic term not found.'], 404);
+        }
+        return response()->json([
+            'data' => $data,
+            'message' => 'Academic term retrieved successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+
+    public function update(AcademicTermRequest $request, string $id)
     {
-        //
+        $data = $request->validated();
+        $data = AcademicTerms::query()->find($id);
+
+        if (! $data) {
+            return response()->json([
+                'message' => 'data not found',
+            ], 404);
+        }
+        $data->update($validate);
+
+        return response()->json([
+            'message' => 'updated successfully',
+            'data' => $data->fresh(),
+        ], 201);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(string $id)
     {
-        //
+        $data = AcademicTerms::query()->find($id);
+        if (! $data) {
+            return response()->json([
+                'message' => 'data not found',
+            ], 404);
+        }
+        $data->delete();
+
+        return response()->json([
+            'message' => 'deleted successfully',
+        ], 200);
     }
 }

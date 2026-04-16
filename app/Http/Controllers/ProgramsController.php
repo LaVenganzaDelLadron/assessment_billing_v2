@@ -2,47 +2,73 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProgramRequest;
+use App\Http\Models\Program;
 use Illuminate\Http\Request;
 
 class ProgramsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        //
+        $data = Program::query()->get();
+        if($data->isEmpty()) {
+            return response()->json(['message' => 'No programs found.'], 404);
+        }
+        return response()->json([
+            'data' => $data,
+            'message' => 'Programs retrieved successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(ProgramRequest $request)
     {
-        //
+        $data = Program::query()->create($request->validated());
+        return response()->json([
+            'data' => $data,
+            'message' => 'Program created successfully.',
+            'status' => 'success',
+        ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        //
+        $data = Program::query()->find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Program not found.'], 404);
+        }
+        return response()->json([
+            'data' => $data,
+            'message' => 'Program retrieved successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(ProgramRequest $request, string $id)
     {
-        //
+        $data = Program::query()->find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Program not found.'], 404);
+        }
+        $data->update($request->validated());
+        return response()->json([
+            'data' => $data->fresh(),
+            'message' => 'Program updated successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        $data = Program::query()->find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Program not found.'], 404);
+        }
+        $data->delete();
+        return response()->json([
+            'message' => 'Program deleted successfully.',
+            'status' => 'success',
+        ], 200);
     }
 }

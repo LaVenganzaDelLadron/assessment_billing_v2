@@ -2,47 +2,74 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StudentRequest;
+use App\Http\Models\Student;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class StudentsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+
+    public function index(): JsonResponse
     {
-        //
+        $data = Student::query()->get();
+        if($data->isEmpty()) {
+            return response()->json(['message' => 'No students found.'], 404);
+        }
+        return response()->json([
+            'data' => $data,
+            'message' => 'Students retrieved successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StudentRequest $request): JsonResponse
     {
-        //
+        $data = Student::query()->create($request->validated());
+        return response()->json([
+            'data' => $data,
+            'message' => 'Student created successfully.',
+            'status' => 'success',
+        ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        //
+        $data = Student::query()->find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Student not found.'], 404);
+        }
+        return response()->json([
+            'data' => $data,
+            'message' => 'Student retrieved successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(StudentRequest $request, string $id): JsonResponse
     {
-        //
+        $data = Student::query()->find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Student not found.'], 404);
+        }
+        $data->update($request->validated());
+        return response()->json([
+            'data' => $data->fresh(),
+            'message' => 'Student updated successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        //
+        $data = Student::query()->find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Student not found.'], 404);
+        }
+        $data->delete();
+        return response()->json([
+            'message' => 'Student deleted successfully.',
+            'status' => 'success',
+        ], 200);
     }
 }

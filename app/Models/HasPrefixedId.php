@@ -6,13 +6,17 @@ use Illuminate\Support\Str;
 
 trait HasPrefixedId
 {
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
     protected static function bootHasPrefixedId(): void
     {
+        static::retrieved(function (self $model): void {
+            $model->incrementing = false;
+            $model->keyType = 'string';
+        });
+
         static::creating(function (self $model): void {
+            $model->incrementing = false;
+            $model->keyType = 'string';
+
             if (! $model->getKey()) {
                 $model->setAttribute($model->getKeyName(), $model->generatePrefixedId());
             }

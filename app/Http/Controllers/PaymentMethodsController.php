@@ -2,47 +2,72 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PaymentMethodsRequest;
+use App\Http\Models\PaymentMethods;
 use Illuminate\Http\Request;
 
 class PaymentMethodsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $data = PaymentMethods::query()->get();
+        if($data->isEmpty()) {
+            return response()->json(['message' => 'No payment methods found.'], 404);
+        }
+        return response()->json([
+            'data' => $data,
+            'message' => 'Payment methods retrieved successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(PaymentMethodsRequest $request)
     {
-        //
+        $data = PaymentMethods::query()->create($request->validated());
+        return response()->json([
+            'data' => $data,
+            'message' => 'Payment method created successfully.',
+            'status' => 'success',
+        ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        //
+        $data = PaymentMethods::query()->find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Payment method not found.'], 404);
+        }
+        return response()->json([
+            'data' => $data,
+            'message' => 'Payment method retrieved successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(PaymentMethodsRequest $request, string $id)
     {
-        //
+        $data = PaymentMethods::query()->find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Payment method not found.'], 404);
+        }
+        $data->update($request->validated());
+        return response()->json([
+            'data' => $data->fresh(),
+            'message' => 'Payment method updated successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        $data = PaymentMethods::query()->find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Payment method not found.'], 404);
+        }
+        $data->delete();
+        return response()->json([
+            'message' => 'Payment method deleted successfully.',
+            'status' => 'success',
+        ], 200);
     }
 }

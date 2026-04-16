@@ -9,8 +9,9 @@ class AcademicTermsRequest extends CrudRequest
     public function rules(): array
     {
         return [
-            'school_year' => ['required', 'string', 'max:9'],
+            'school_year' => ['sometimes', 'required', 'string', 'max:9'],
             'semester' => [
+                'sometimes',
                 'required',
                 'string',
                 'max:20',
@@ -18,9 +19,9 @@ class AcademicTermsRequest extends CrudRequest
                     ->where(fn ($query) => $query->where('school_year', $this->string('school_year')->toString()))
                     ->ignore($this->routeId()),
             ],
-            'start_date' => ['required', 'date'],
-            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
-            'is_active' => ['required', 'boolean'],
+            'start_date' => ['sometimes', 'required', 'date'],
+            'end_date' => ['sometimes', 'required', 'date', 'after_or_equal:start_date'],
+            'is_active' => ['sometimes', 'required', 'boolean'],
         ];
     }
 }

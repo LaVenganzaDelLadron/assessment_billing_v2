@@ -2,47 +2,79 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PaymentAllocationsRequest;
+use App\Http\Models\PaymentAllocations;
 use Illuminate\Http\Request;
 
 class PaymentAllocationsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        //
+        $data = PaymentAllocations::query()->get();
+        if($data->isEmpty()) {
+            return response()->json(['message' => 'No payment allocations found.'], 404);
+        }
+        return response()->json([
+            'data' => $data,
+            'message' => 'Payment allocations retrieved successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(PaymentAllocationsRequest $request)
     {
-        //
+        $data = PaymentAllocations::query()->create($request->validated());
+        return response()->json([
+            'data' => $data,
+            'message' => 'Payment allocation created successfully.',
+            'status' => 'success',
+        ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        //
+        $data = PaymentAllocations::query()->find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Payment allocation not found.'], 404);
+        }
+        return response()->json([
+            'data' => $data,
+            'message' => 'Payment allocation retrieved successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(PaymentAllocationsRequest $request, string $id)
     {
-        //
+        $validate = $request->validated();
+        $data = PaymentAllocations::query()->find($id);
+
+        if (! $data) {
+            return response()->json([
+                'message' => 'Payment allocation not found',
+            ], 404);
+        }
+        $data->update($validate);
+
+        return response()->json([
+            'message' => 'Payment allocation updated successfully',
+            'data' => $data->fresh(),
+        ], 201);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        $data = PaymentAllocations::query()->find($id);
+        if (! $data) {
+            return response()->json([
+                'message' => 'Payment allocation not found',
+            ], 404);
+        }
+        $data->delete();
+
+        return response()->json([
+            'message' => 'Payment allocation deleted successfully',
+        ], 200);
     }
 }

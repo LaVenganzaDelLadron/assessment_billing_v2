@@ -17,12 +17,25 @@ class AuditLogsRequest extends CrudRequest
 
     public function rules(): array
     {
+        if($this->isMethod('put') || $this->isMethod('patch')) {
+            return [
+                'user_id' => ['sometimes', 'nullable', 'exists:users,id'],
+                'action' => ['sometimes', 'required', 'string', 'max:255'],
+                'entity_type' => ['sometimes', 'required', 'string', 'max:255'],
+                'entity_id' => ['sometimes', 'required', 'string', 'max:255'],
+                'ip_address' => ['sometimes', 'nullable', 'ip'],
+            ];
+        }
+        return [];
+    }
+    public function messages(): array
+    {
         return [
-            'user_id' => ['nullable', 'exists:users,id'],
-            'action' => ['required', 'string', 'max:255'],
-            'entity_type' => ['required', 'string', 'max:255'],
-            'entity_id' => ['required', 'string', 'max:255'],
-            'ip_address' => ['nullable', 'ip'],
+            'user_id.exists' => 'The selected user does not exist.',
+            'action.required' => 'The action field is required.',
+            'entity_type.required' => 'The entity type field is required.',
+            'entity_id.required' => 'The entity ID field is required.',
+            'ip_address.ip' => 'The IP address must be a valid IP address.',
         ];
     }
 }

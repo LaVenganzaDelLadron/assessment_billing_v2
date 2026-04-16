@@ -2,47 +2,74 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RefundsRequest;
+use App\Http\Models\Refunds;
 use Illuminate\Http\Request;
 
 class RefundsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        //
+        $data = Refunds::query()->get();
+        if($data->isEmpty()) {
+            return response()->json(['message' => 'No refunds found.'], 404);
+        }
+        return response()->json([
+            'data' => $data,
+            'message' => 'Refunds retrieved successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(RefundsRequest $request)
     {
-        //
+        $data = Refunds::query()->create($request->validated());
+        return response()->json([
+            'data' => $data,
+            'message' => 'Refund created successfully.',
+            'status' => 'success',
+        ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        //
+        $data = Refunds::query()->find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Refund not found.'], 404);
+        }
+        return response()->json([
+            'data' => $data,
+            'message' => 'Refund retrieved successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(RefundsRequest $request, string $id)
     {
-        //
+        $data = Refunds::query()->find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Refund not found.'], 404);
+        }
+        $data->update($request->validated());
+        return response()->json([
+            'data' => $data->fresh(),
+            'message' => 'Refund updated successfully.',
+            'status' => 'success',
+        ], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(string $id)
     {
-        //
+        $data = Refunds::query()->find($id);
+        if ($data === null) {
+            return response()->json(['message' => 'Refund not found.'], 404);
+        }
+        $data->delete();
+        return response()->json([
+            'message' => 'Refund deleted successfully.',
+            'status' => 'success',
+        ], 200);
     }
 }
