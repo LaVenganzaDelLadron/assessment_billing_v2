@@ -6,6 +6,15 @@ use Illuminate\Validation\Rule;
 
 class AuditLogsRequest extends CrudRequest
 {
+    public function authorize(): bool
+    {
+        return true;
+    }
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
     protected function prepareForValidation(): void
     {
         if (! $this->filled('ip_address')) {
