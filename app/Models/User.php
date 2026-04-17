@@ -32,6 +32,15 @@ class User extends Authenticatable
     }
 
     /**
+     * Disable HasPrefixedId trait's ID generation
+     * Keep numeric IDs for User table
+     */
+    protected static function bootHasPrefixedId(): void
+    {
+        // Override to disable automatic ID generation
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

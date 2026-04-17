@@ -5,6 +5,7 @@ use App\Http\Controllers\AssessmentBreakdownController;
 use App\Http\Controllers\AssessmentsController;
 use App\Http\Controllers\AuditLogsController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\DataSyncController;
 use App\Http\Controllers\EnrollmentsController;
 use App\Http\Controllers\FeeStructureController;
 use App\Http\Controllers\InvoiceLinesController;
@@ -172,6 +173,12 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
         Route::get('/{id}', 'show');
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
+    });
+
+    // Data Sync Routes (Admin Only)
+    Route::prefix('sync')->controller(DataSyncController::class)->group(function () {
+        Route::post('/', 'sync')->name('admin.sync');
+        Route::get('/status', 'status')->name('admin.sync.status');
     });
 });
 

@@ -1,0 +1,46 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('programs', function (Blueprint $table) {
+            if (! Schema::hasColumn('programs', 'custom_id')) {
+                $table->string('custom_id')->nullable()->unique()->after('id');
+            }
+        });
+
+        Schema::table('subjects', function (Blueprint $table) {
+            if (! Schema::hasColumn('subjects', 'custom_id')) {
+                $table->string('custom_id')->nullable()->unique()->after('id');
+            }
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('programs', function (Blueprint $table) {
+            if (Schema::hasColumn('programs', 'custom_id')) {
+                $table->dropUnique(['custom_id']);
+                $table->dropColumn('custom_id');
+            }
+        });
+
+        Schema::table('subjects', function (Blueprint $table) {
+            if (Schema::hasColumn('subjects', 'custom_id')) {
+                $table->dropUnique(['custom_id']);
+                $table->dropColumn('custom_id');
+            }
+        });
+    }
+};
