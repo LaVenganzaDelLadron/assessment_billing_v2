@@ -18,6 +18,9 @@ class AuthController extends Controller
         // Validate the request data
         $validatedData = $request->validated();
 
+        //Automatically set a role to student
+        $validatedData['role'] = 'student';
+
         // Create the user
         $user = User::create($validatedData);
 

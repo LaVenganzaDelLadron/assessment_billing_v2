@@ -22,9 +22,20 @@ class RegisterRequest extends FormRequest
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
                 'password' => ['required', 'string', 'min:8'],
+                'role' => ['sometimes', 'string', 'in:student,teacher,admin'],
             ];
         }
         return [];
+    }
+
+    public function validated(): array
+    {
+        $validatedData = parent::validated();
+
+        // Ensure role is always set to 'student' on registration
+        $validatedData['role'] = 'student';
+
+        return $validatedData;
     }
 
     public function messages(): array
