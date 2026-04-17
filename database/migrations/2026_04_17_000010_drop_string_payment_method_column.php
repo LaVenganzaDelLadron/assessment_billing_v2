@@ -16,24 +16,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Only drop if column exists
+        // Drop old column safely
         if (Schema::hasColumn('payments', 'payment_method')) {
             Schema::table('payments', function (Blueprint $table) {
                 $table->dropColumn('payment_method');
             });
         }
 
-        // Update payment_method_id to NOT NULL in a separate operation
-        DB::statement('ALTER TABLE payments MODIFY payment_method_id BIGINT UNSIGNED NOT NULL;');
+        // PostgreSQL-safe NOT NULL update
+        DB::statement('ALTER TABLE payments ALTER COLUMN payment_method_id SET NOT NULL');
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        // Make payment_method_id nullable again
-        DB::statement('ALTER TABLE payments MODIFY payment_method_id BIGINT UNSIGNED NULL;');
+        DB::statement('ALTER TABLE payments ALTER COLUMN payment_method_id DROP NOT NULL');
 
         Schema::table('payments', function (Blueprint $table) {
             $table->string('payment_method')->after('amount_paid');
