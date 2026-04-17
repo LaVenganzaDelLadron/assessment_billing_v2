@@ -1,12 +1,13 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\AcademicTermsController;
 use App\Http\Controllers\AssessmentBreakdownController;
 use App\Http\Controllers\AssessmentsController;
 use App\Http\Controllers\AuditLogsController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\EnrollmentsController;
 use App\Http\Controllers\FeeStructureController;
+use App\Http\Controllers\InvoiceLinesController;
 use App\Http\Controllers\InvoicesController;
 use App\Http\Controllers\OfficialReceiptsController;
 use App\Http\Controllers\PaymentAllocationsController;
@@ -16,10 +17,9 @@ use App\Http\Controllers\ProgramsController;
 use App\Http\Controllers\RefundsController;
 use App\Http\Controllers\StudentsController;
 use App\Http\Controllers\SubjectsController;
+use App\Http\Controllers\TeachersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
@@ -30,14 +30,13 @@ Route::prefix('auth')->controller(AuthController::class)->group(function () {
     Route::post('/login', 'login');
 });
 
-
 Route::middleware(['auth:sanctum'])->prefix('user')->controller(AuthController::class)->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::prefix('academic-terms')->controller(App\Http\Controllers\AcademicTermsController::class)->group(function () {
+    Route::prefix('academic-terms')->controller(AcademicTermsController::class)->group(function () {
         Route::get('/', 'index');
         Route::post('/', 'store');
         Route::get('/{id}', 'show');
@@ -83,6 +82,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::prefix('invoices')->controller(InvoicesController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    Route::prefix('invoice-lines')->controller(InvoiceLinesController::class)->group(function () {
         Route::get('/', 'index');
         Route::post('/', 'store');
         Route::get('/{id}', 'show');
@@ -153,9 +160,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
     });
+
+    Route::prefix('teachers')->controller(TeachersController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
 });
-
-
-
-
-
