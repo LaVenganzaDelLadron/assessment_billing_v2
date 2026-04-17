@@ -11,7 +11,6 @@ class Programs extends PrefixedModel
     protected $fillable = [
         'name',
         'department',
-        'tuition_per_unit',
     ];
 
     public function students(): HasMany
@@ -36,8 +35,6 @@ class Programs extends PrefixedModel
 
     protected function casts(): array
     {
-        return [
-            'tuition_per_unit' => 'decimal:2',
-        ];
+        return [];
     }
 }

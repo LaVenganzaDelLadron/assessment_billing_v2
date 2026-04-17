@@ -47,11 +47,17 @@ class BillingService
 
         $totalAmount = 0;
 
+        // Get tuition rate from fee_structure (now the single source of truth)
+        $tuitionFee = FeeStructure::where('program_id', $program->id)
+            ->where('fee_type', 'tuition')
+            ->first();
+
+        $tuitionRate = $tuitionFee?->amount ?? 0;
+
         // Create invoice lines for tuition (per subject)
         foreach ($enrollments as $enrollment) {
             $subject = $enrollment->subject;
             $units = $subject->units;
-            $tuitionRate = $program->tuition_per_unit;
             $amount = $units * $tuitionRate;
 
             InvoiceLine::create([
