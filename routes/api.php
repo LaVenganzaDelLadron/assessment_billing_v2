@@ -21,20 +21,25 @@ use App\Http\Controllers\TeachersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
-});
-
+// Public endpoints (no auth required)
 Route::prefix('auth')->controller(AuthController::class)->group(function () {
     Route::post('/register', 'register');
     Route::post('/login', 'login');
 });
 
-Route::middleware(['auth:sanctum'])->prefix('user')->controller(AuthController::class)->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
+// Authenticated endpoints (basic auth check)
+Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
+    return $request->user();
 });
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum'])->prefix('user')->controller(AuthController::class)->group(function () {
+    Route::post('/logout', 'logout');
+});
+
+// ============================================================================
+// ADMIN ROUTES - Full access to all resources
+// ============================================================================
+Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
 
     Route::prefix('academic-terms')->controller(AcademicTermsController::class)->group(function () {
         Route::get('/', 'index');
@@ -167,5 +172,80 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/{id}', 'show');
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
+    });
+});
+
+// ============================================================================
+// TEACHER ROUTES - Limited access to manage their subjects and assessments
+// ============================================================================
+Route::middleware(['auth:sanctum', 'teacher'])->prefix('teacher')->group(function () {
+
+    Route::prefix('academic-terms')->controller(AcademicTermsController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::get('/{id}', 'show');
+    });
+
+    Route::prefix('subjects')->controller(SubjectsController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::get('/{id}', 'show');
+    });
+
+    Route::prefix('enrollments')->controller(EnrollmentsController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::get('/{id}', 'show');
+    });
+
+    Route::prefix('assessments')->controller(AssessmentsController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    Route::prefix('assessment-breakdown')->controller(AssessmentBreakdownController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+});
+
+// ============================================================================
+// STUDENT ROUTES - Access only to their own data
+// ============================================================================
+Route::middleware(['auth:sanctum', 'student'])->prefix('student')->group(function () {
+
+    Route::prefix('enrollments')->controller(EnrollmentsController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::get('/{id}', 'show');
+    });
+
+    Route::prefix('invoices')->controller(InvoicesController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::get('/{id}', 'show');
+    });
+
+    Route::prefix('invoice-lines')->controller(InvoiceLinesController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::get('/{id}', 'show');
+    });
+
+    Route::prefix('official-receipts')->controller(OfficialReceiptsController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::get('/{id}', 'show');
+    });
+
+    Route::prefix('payment-methods')->controller(PaymentMethodsController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}', 'update');
+    });
+
+    Route::prefix('payments')->controller(PaymentsController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::get('/{id}', 'show');
     });
 });
