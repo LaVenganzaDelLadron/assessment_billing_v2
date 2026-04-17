@@ -12,16 +12,7 @@ class Assessments extends PrefixedModel
     protected $fillable = [
         'student_id',
         'academic_term_id',
-        'semester',
-        'school_year',
         'total_units',
-        'tuition_fee',
-        'misc_fee',
-        'lab_fee',
-        'other_fees',
-        'total_amount',
-        'discount',
-        'net_amount',
         'status',
     ];
 
@@ -54,13 +45,6 @@ class Assessments extends PrefixedModel
     {
         return [
             'total_units' => 'decimal:2',
-            'tuition_fee' => 'decimal:2',
-            'misc_fee' => 'decimal:2',
-            'lab_fee' => 'decimal:2',
-            'other_fees' => 'decimal:2',
-            'total_amount' => 'decimal:2',
-            'discount' => 'decimal:2',
-            'net_amount' => 'decimal:2',
         ];
     }
 }

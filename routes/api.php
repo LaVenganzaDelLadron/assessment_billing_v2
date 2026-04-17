@@ -3,14 +3,14 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\AcademicTermsController;
 use App\Http\Controllers\AssessmentBreakdownController;
-use App\Http\Controlllers\AssessmentsController;
-use App\Http\Controllers\AuditLogControlller;
+use App\Http\Controllers\AssessmentsController;
+use App\Http\Controllers\AuditLogsController;
 use App\Http\Controllers\EnrollmentsController;
 use App\Http\Controllers\FeeStructureController;
-use App\Http\Controllers\InvoiceController;
-use App\Http\Controllers\OfficialReceiptController;
-use App\Http\Controllers\PaymentAllocationController;
-use App\Http\Controllers\PaymentMethodController;
+use App\Http\Controllers\InvoicesController;
+use App\Http\Controllers\OfficialReceiptsController;
+use App\Http\Controllers\PaymentAllocationsController;
+use App\Http\Controllers\PaymentMethodsController;
 use App\Http\Controllers\PaymentsController;
 use App\Http\Controllers\ProgramsController;
 use App\Http\Controllers\RefundsController;
@@ -36,6 +36,7 @@ Route::middleware(['auth:sanctum'])->prefix('user')->controller(AuthController::
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
+
     Route::prefix('academic-terms')->controller(App\Http\Controllers\AcademicTermsController::class)->group(function () {
         Route::get('/', 'index');
         Route::post('/', 'store');
@@ -44,11 +45,115 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('/{id}', 'destroy');
     });
 
+    Route::prefix('assessment-breakdown')->controller(AssessmentBreakdownController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
 
+    Route::prefix('assessments')->controller(AssessmentsController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
 
+    Route::prefix('audit-logs')->controller(AuditLogsController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::get('/{id}', 'show');
+    });
 
+    Route::prefix('enrollments')->controller(EnrollmentsController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    Route::prefix('fee-structures')->controller(FeeStructureController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    Route::prefix('invoices')->controller(InvoicesController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    Route::prefix('official-receipts')->controller(OfficialReceiptsController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    Route::prefix('payment-allocation')->controller(PaymentAllocationsController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    Route::prefix('payment-methods')->controller(PaymentMethodsController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    Route::prefix('payments')->controller(PaymentsController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    Route::prefix('programs')->controller(ProgramsController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    Route::prefix('refunds')->controller(RefundsController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    Route::prefix('students')->controller(StudentsController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
+
+    Route::prefix('subjects')->controller(SubjectsController::class)->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+    });
 });
-
 
 
 

@@ -12,8 +12,6 @@ class Enrollments extends PrefixedModel
         'student_id',
         'subject_id',
         'academic_term_id',
-        'semester',
-        'school_year',
         'status',
     ];
 

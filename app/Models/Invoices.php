@@ -39,6 +39,11 @@ class Invoices extends PrefixedModel
         return $this->hasMany(PaymentAllocations::class, 'invoice_id');
     }
 
+    public function invoiceLines(): HasMany
+    {
+        return $this->hasMany(InvoiceLine::class, 'invoice_id');
+    }
+
     protected function idPrefix(): string
     {
         return 'INV';

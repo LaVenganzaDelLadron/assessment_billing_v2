@@ -10,15 +10,23 @@ class Students extends PrefixedModel
     protected $table = 'students';
 
     protected $fillable = [
+        'user_id',
         'student_no',
         'first_name',
         'middle_name',
         'last_name',
-        'email',
         'program_id',
         'year_level',
         'status',
     ];
+
+    /**
+     * Get the user associated with this student.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function program(): BelongsTo
     {

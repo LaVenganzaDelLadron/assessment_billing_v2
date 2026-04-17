@@ -13,7 +13,7 @@ class Payments extends PrefixedModel
     protected $fillable = [
         'invoice_id',
         'amount_paid',
-        'payment_method',
+        'payment_method_id',
         'reference_number',
         'paid_at',
     ];
@@ -21,6 +21,11 @@ class Payments extends PrefixedModel
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoices::class, 'invoice_id');
+    }
+
+    public function paymentMethod(): BelongsTo
+    {
+        return $this->belongsTo(PaymentMethod::class, 'payment_method_id');
     }
 
     public function paymentAllocations(): HasMany
