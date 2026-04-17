@@ -15,8 +15,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('enrollments', function (Blueprint $table) {
-            // Add unique constraint (prevents duplicates)
-            $table->unique(['student_id', 'subject_id', 'academic_term_id'], 'unique_student_subject_term');
+            $table->dropUnique('unique_student_subject_term'); // safe even if missing
+        });
+
+        Schema::table('enrollments', function (Blueprint $table) {
+            $table->unique(
+                ['student_id', 'subject_id', 'academic_term_id'],
+                'unique_student_subject_term'
+            );
         });
     }
 
