@@ -15,13 +15,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('enrollments', function (Blueprint $table) {
-            $table->unique(['student_id', 'subject_id', 'academic_term_id']);
+            $table->unique(
+                ['student_id', 'subject_id', 'academic_term_id'],
+                'unique_student_subject_term'
+            );
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('enrollments', function (Blueprint $table) {
