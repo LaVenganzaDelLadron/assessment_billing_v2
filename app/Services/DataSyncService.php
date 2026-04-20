@@ -23,17 +23,37 @@ class DataSyncService
      */
     public function syncAll(): array
     {
-        try {
-            DB::beginTransaction();
-
+        return $this->runSync(function (): void {
             $this->syncPrograms();
             $this->syncSubjects();
+        }, 'Data synchronization completed successfully');
+    }
+
+    /**
+     * Execute sync of programs only
+     */
+    public function syncProgramsOnly(): array
+    {
+        return $this->runSync(function (): void {
+            $this->syncPrograms();
+        }, 'Programs synchronization completed successfully');
+    }
+
+    /**
+     * Execute sync transaction and capture logs
+     */
+    private function runSync(callable $callback, string $successMessage): array
+    {
+        try {
+            $this->syncLog = [];
+            DB::beginTransaction();
+            $callback();
 
             DB::commit();
 
             return [
                 'status' => 'success',
-                'message' => 'Data synchronization completed successfully',
+                'message' => $successMessage,
                 'logs' => $this->syncLog,
             ];
         } catch (\Exception $e) {
@@ -253,7 +273,8 @@ class DataSyncService
     private function fetchFromApi(string $endpoint): array
     {
         try {
-            $response = Http::timeout(30)
+            $response = Http::connectTimeout(10)
+                ->timeout(30)
                 ->retry(3, 100)
                 ->get(self::API_BASE_URL.$endpoint);
 

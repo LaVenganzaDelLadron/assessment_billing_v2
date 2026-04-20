@@ -16,10 +16,11 @@ class Kernel extends ConsoleKernel
 
     protected function schedule(Schedule $schedule): void
     {
-        // Run data sync every 12 hours
+        // Keep the local database close to the external source of truth.
         $schedule->job(new SyncExternalDataJob)
-            ->everyTwelveHours()
+            ->everyFiveMinutes()
             ->name('sync-external-data')
+            ->withoutOverlapping(10)
             ->onFailure(function () {
                 Log::error('Scheduled sync failed');
             });

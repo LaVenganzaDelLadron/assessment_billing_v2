@@ -3,11 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Teachers extends PrefixedModel
 {
     protected $table = 'teachers';
+
+    public $incrementing = true;
+
+    protected $keyType = 'int';
 
     protected $fillable = [
         'user_id',
@@ -39,9 +42,10 @@ class Teachers extends PrefixedModel
     {
         $full = $this->first_name;
         if ($this->middle_name) {
-            $full .= ' ' . $this->middle_name;
+            $full .= ' '.$this->middle_name;
         }
-        $full .= ' ' . $this->last_name;
+        $full .= ' '.$this->last_name;
+
         return $full;
     }
 
@@ -51,5 +55,13 @@ class Teachers extends PrefixedModel
     public function getEmailAttribute(): string
     {
         return $this->user->email;
+    }
+
+    /**
+     * Disable HasPrefixedId trait's ID generation
+     */
+    protected static function bootHasPrefixedId(): void
+    {
+        // Override to disable automatic ID generation
     }
 }

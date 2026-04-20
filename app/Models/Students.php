@@ -9,6 +9,10 @@ class Students extends PrefixedModel
 {
     protected $table = 'students';
 
+    public $incrementing = true;
+
+    protected $keyType = 'int';
+
     protected $fillable = [
         'user_id',
         'student_no',
@@ -51,5 +55,13 @@ class Students extends PrefixedModel
     protected function idPrefix(): string
     {
         return 'STU';
+    }
+
+    /**
+     * Disable HasPrefixedId trait's ID generation
+     */
+    protected static function bootHasPrefixedId(): void
+    {
+        // Override to disable automatic ID generation
     }
 }

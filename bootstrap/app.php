@@ -21,6 +21,11 @@ return Application::configure(basePath: dirname(__DIR__))
             EnsureFrontendRequestsAreStateful::class,
         ]);
 
+        // Exclude API routes from CSRF protection (using Sanctum token auth instead)
+        $middleware->validateCsrfTokens(except: [
+            'api/*',
+        ]);
+
         $middleware->alias([
             'verified' => EnsureEmailIsVerified::class,
             'admin' => AdminMiddleware::class,

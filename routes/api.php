@@ -14,6 +14,7 @@ use App\Http\Controllers\OfficialReceiptsController;
 use App\Http\Controllers\PaymentAllocationsController;
 use App\Http\Controllers\PaymentMethodsController;
 use App\Http\Controllers\PaymentsController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProgramsController;
 use App\Http\Controllers\RefundsController;
 use App\Http\Controllers\StudentsController;
@@ -217,6 +218,11 @@ Route::middleware(['auth:sanctum', 'teacher'])->prefix('teacher')->group(functio
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');
     });
+
+    Route::prefix('profile')->controller(ProfileController::class)->group(function () {
+        Route::get('/', 'getTeacherProfile');
+        Route::put('/', 'updateTeacherProfile');
+    });
 });
 
 // ============================================================================
@@ -255,4 +261,17 @@ Route::middleware(['auth:sanctum', 'student'])->prefix('student')->group(functio
         Route::get('/', 'index');
         Route::get('/{id}', 'show');
     });
+
+    Route::prefix('profile')->controller(ProfileController::class)->group(function () {
+        Route::get('/', 'getStudentProfile');
+        Route::put('/', 'updateStudentProfile');
+    });
+});
+
+Route::prefix('programs')->controller(ProfileController::class)->group(function () {
+    Route::get('/', 'listPrograms');
+});
+
+Route::prefix('subjects')->controller(SubjectsController::class)->group(function () {
+    Route::get('/', 'publicIndex');
 });

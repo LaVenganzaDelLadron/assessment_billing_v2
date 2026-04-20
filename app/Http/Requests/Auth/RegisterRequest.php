@@ -17,7 +17,7 @@ class RegisterRequest extends FormRequest
      */
     public function rules(): array
     {
-        if($this->isMethod('post') || $this->isMethod('put')) {
+        if ($this->isMethod('post') || $this->isMethod('put')) {
             return [
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
@@ -25,15 +25,18 @@ class RegisterRequest extends FormRequest
                 'role' => ['sometimes', 'string', 'in:student,teacher,admin'],
             ];
         }
+
         return [];
     }
 
-    public function validated(): array
+    public function validated($key = null, $default = null): mixed
     {
-        $validatedData = parent::validated();
+        $validatedData = parent::validated($key, $default);
 
-        // Ensure role is always set to 'student' on registration
-        $validatedData['role'] = 'student';
+        // Default to 'student' if no role provided
+        if (is_array($validatedData) && empty($validatedData['role'])) {
+            $validatedData['role'] = 'student';
+        }
 
         return $validatedData;
     }
