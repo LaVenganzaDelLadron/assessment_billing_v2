@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AcademicTermsController;
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AssessmentBreakdownController;
 use App\Http\Controllers\AssessmentsController;
 use App\Http\Controllers\AuditLogsController;
@@ -42,6 +43,8 @@ Route::middleware(['auth:sanctum'])->prefix('user')->controller(AuthController::
 // ADMIN ROUTES - Full access to all resources
 // ============================================================================
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
+
+    Route::get('/dashboard', [AdminDashboardController::class, 'stats']);
 
     Route::prefix('academic-terms')->controller(AcademicTermsController::class)->group(function () {
         Route::get('/', 'index');
