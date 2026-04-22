@@ -52,6 +52,11 @@ class Students extends PrefixedModel
         return $this->hasMany(Invoices::class, 'student_id');
     }
 
+    public function studentScholarships(): HasMany
+    {
+        return $this->hasMany(StudentScholarship::class, 'student_id');
+    }
+
     protected function idPrefix(): string
     {
         return 'STU';
