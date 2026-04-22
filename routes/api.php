@@ -170,6 +170,8 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
         Route::get('/students', 'studentsWithScholarships');
         Route::post('/', 'store');
         Route::post('/apply', 'applyScholarship');
+        Route::put('/apply/{id}', 'updateAppliedScholarship');
+        Route::delete('/apply/{id}', 'destroyAppliedScholarship');
         Route::get('/{id}', 'show');
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');

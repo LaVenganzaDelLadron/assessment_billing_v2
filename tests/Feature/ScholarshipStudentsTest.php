@@ -14,6 +14,48 @@ class ScholarshipStudentsTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_admin_can_update_an_applied_scholarship(): void
+    {
+        [$admin, $appliedScholarship] = $this->createAppliedScholarship();
+
+        Sanctum::actingAs($admin, ['*']);
+
+        $response = $this->putJson("/api/admin/scholarships/apply/{$appliedScholarship->id}", [
+            'original_amount' => 12000,
+            'discount_type' => 'amount',
+            'discount_value' => 3000,
+        ]);
+
+        $response->assertOk()
+            ->assertJsonPath('status', 'success')
+            ->assertJsonPath('message', 'Applied scholarship updated successfully.')
+            ->assertJsonPath('data.id', $appliedScholarship->id)
+            ->assertJsonPath('data.discount_type', 'amount')
+            ->assertJsonPath('data.discount_value', '3000.00')
+            ->assertJsonPath('data.original_amount', '12000.00')
+            ->assertJsonPath('data.discount_amount', '3000.00')
+            ->assertJsonPath('data.final_amount', '9000.00');
+    }
+
+    public function test_admin_can_delete_an_applied_scholarship(): void
+    {
+        [$admin, $appliedScholarship] = $this->createAppliedScholarship();
+
+        Sanctum::actingAs($admin, ['*']);
+
+        $response = $this->deleteJson("/api/admin/scholarships/apply/{$appliedScholarship->id}");
+
+        $response->assertOk()
+            ->assertJson([
+                'message' => 'Applied scholarship deleted successfully.',
+                'status' => 'success',
+            ]);
+
+        $this->assertDatabaseMissing('student_scholarships', [
+            'id' => $appliedScholarship->id,
+        ]);
+    }
+
     public function test_admin_can_view_students_with_scholarships(): void
     {
         $admin = User::factory()->create([
@@ -91,5 +133,62 @@ class ScholarshipStudentsTest extends TestCase
             ->assertJson([
                 'message' => 'No students with scholarships found.',
             ]);
+    }
+
+    /**
+     * @return array{0: User, 1: StudentScholarship}
+     */
+    private function createAppliedScholarship(): array
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+
+        $studentUser = User::factory()->create([
+            'role' => 'student',
+        ]);
+
+        $programId = DB::table('programs')->insertGetId([
+            'name' => 'BS Information Technology',
+            'department' => 'College of Computing',
+            'code' => 'BSIT',
+            'status' => 'active',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $studentId = DB::table('students')->insertGetId([
+            'user_id' => $studentUser->id,
+            'student_no' => '2026-0001',
+            'first_name' => 'Jane',
+            'middle_name' => 'Q',
+            'last_name' => 'Doe',
+            'program_id' => $programId,
+            'year_level' => 2,
+            'status' => 'active',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $scholarship = Scholarship::create([
+            'name' => 'Academic Excellence',
+            'description' => 'Merit-based scholarship',
+            'discount_type' => 'percent',
+            'discount_value' => 50,
+            'is_active' => true,
+        ]);
+
+        $appliedScholarship = StudentScholarship::create([
+            'student_id' => $studentId,
+            'scholarship_id' => $scholarship->id,
+            'discount_type' => 'percent',
+            'discount_value' => 50,
+            'original_amount' => 10000,
+            'discount_amount' => 5000,
+            'final_amount' => 5000,
+            'applied_at' => now(),
+        ]);
+
+        return [$admin, $appliedScholarship];
     }
 }

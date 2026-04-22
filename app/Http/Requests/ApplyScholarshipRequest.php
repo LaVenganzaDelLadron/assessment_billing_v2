@@ -13,6 +13,17 @@ class ApplyScholarshipRequest extends CrudRequest
 
     public function rules(): array
     {
+        if ($this->isMethod('put') || $this->isMethod('patch')) {
+            return [
+                'student_id' => ['sometimes', 'required', 'exists:students,id'],
+                'scholarship_id' => ['sometimes', 'required', 'exists:scholarships,id'],
+                'original_amount' => ['sometimes', 'required', 'numeric', 'min:0'],
+                'applied_at' => ['nullable', 'date'],
+                'discount_type' => ['nullable', Rule::in(['percent', 'amount'])],
+                'discount_value' => ['nullable', 'numeric', 'min:0'],
+            ];
+        }
+
         return [
             'student_id' => ['required', 'exists:students,id'],
             'scholarship_id' => ['required', 'exists:scholarships,id'],
