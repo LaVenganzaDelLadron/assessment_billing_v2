@@ -166,6 +166,7 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
 
     Route::prefix('scholarships')->controller(SchollarshipController::class)->group(function () {
         Route::get('/', 'index');
+        Route::get('/students', 'studentsWithScholarships');
         Route::post('/', 'store');
         Route::post('/apply', 'applyScholarship');
         Route::get('/{id}', 'show');

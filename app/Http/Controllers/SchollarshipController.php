@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ApplyScholarshipRequest;
 use App\Http\Requests\ScholarshipRequest;
 use App\Models\Scholarship;
-use App\Models\StudentScholarship;
 use App\Models\Students;
+use App\Models\StudentScholarship;
 use Illuminate\Http\JsonResponse;
 
 class SchollarshipController extends Controller
@@ -25,6 +25,24 @@ class SchollarshipController extends Controller
         return response()->json([
             'data' => $data,
             'message' => 'Scholarships retrieved successfully.',
+            'status' => 'success',
+        ], 200);
+    }
+
+    public function studentsWithScholarships(): JsonResponse
+    {
+        $data = StudentScholarship::query()
+            ->with(['student', 'scholarship'])
+            ->latest()
+            ->get();
+
+        if ($data->isEmpty()) {
+            return response()->json(['message' => 'No students with scholarships found.'], 404);
+        }
+
+        return response()->json([
+            'data' => $data,
+            'message' => 'Students with scholarships retrieved successfully.',
             'status' => 'success',
         ], 200);
     }
@@ -104,7 +122,7 @@ class SchollarshipController extends Controller
             return response()->json(['message' => 'Scholarship not found.'], 404);
         }
 
-        if (!$scholarship->is_active) {
+        if (! $scholarship->is_active) {
             return response()->json(['message' => 'This scholarship is inactive and cannot be applied.'], 422);
         }
 
