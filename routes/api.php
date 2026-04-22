@@ -239,6 +239,10 @@ Route::middleware(['auth:sanctum', 'teacher'])->prefix('teacher')->group(functio
         Route::delete('/{id}', 'destroy');
     });
 
+    Route::prefix('teachers')->controller(TeachersController::class)->group(function () {
+        Route::post('/{id}/assign-subject', 'assignSubject');
+    });
+
     Route::prefix('profile')->controller(ProfileController::class)->group(function () {
         Route::get('/', 'getTeacherProfile');
         Route::put('/', 'updateTeacherProfile');
