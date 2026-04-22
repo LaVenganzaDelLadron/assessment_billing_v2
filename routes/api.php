@@ -188,6 +188,9 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::prefix('teachers')->controller(TeachersController::class)->group(function () {
         Route::get('/', 'index');
         Route::post('/', 'store');
+        Route::post('/{id}/assign-subject', 'assignSubject');
+        Route::put('/{id}/assign-subject/{assignmentId}', 'updateAssignedSubject');
+        Route::delete('/{id}/assign-subject/{assignmentId}', 'destroyAssignedSubject');
         Route::get('/{id}', 'show');
         Route::put('/{id}', 'update');
         Route::delete('/{id}', 'destroy');

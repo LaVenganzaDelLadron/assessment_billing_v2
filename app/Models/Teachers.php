@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Teachers extends PrefixedModel
 {
@@ -33,6 +34,11 @@ class Teachers extends PrefixedModel
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function subjectAssignments(): HasMany
+    {
+        return $this->hasMany(SubjectTeacherAssignment::class, 'teacher_id');
     }
 
     /**

@@ -46,6 +46,11 @@ class Subjects extends PrefixedModel
         return $this->hasMany(Enrollments::class, 'subject_id');
     }
 
+    public function teacherAssignments(): HasMany
+    {
+        return $this->hasMany(SubjectTeacherAssignment::class, 'subject_id');
+    }
+
     protected function idPrefix(): string
     {
         return 'SUB';
