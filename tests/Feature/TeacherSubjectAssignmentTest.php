@@ -51,6 +51,35 @@ class TeacherSubjectAssignmentTest extends TestCase
             ->assertJsonPath('data.room', 'Lab 2');
     }
 
+    public function test_admin_can_view_assigned_subjects_in_teacher_index(): void
+    {
+        [$admin, $teacherId] = $this->createTeacher();
+        $subjectId = $this->createSubject('IT101', 'Introduction to Computing');
+
+        SubjectTeacherAssignment::create([
+            'teacher_id' => $teacherId,
+            'subject_id' => $subjectId,
+            'days' => ['Monday', 'Wednesday'],
+            'start_time' => '08:00',
+            'end_time' => '10:00',
+            'room' => 'Lab 1',
+            'status' => 'active',
+        ]);
+
+        Sanctum::actingAs($admin, ['*']);
+
+        $response = $this->getJson('/api/admin/teachers');
+
+        $response->assertOk()
+            ->assertJsonPath('status', 'success')
+            ->assertJsonPath('data.0.id', $teacherId)
+            ->assertJsonPath('data.0.subject_assignments.0.subject_id', $subjectId)
+            ->assertJsonPath('data.0.subject_assignments.0.subject.name', 'Introduction to Computing')
+            ->assertJsonPath('data.0.subject_assignments.0.days.0', 'Monday')
+            ->assertJsonPath('data.0.subject_assignments.0.start_time', '08:00')
+            ->assertJsonPath('data.0.subject_assignments.0.end_time', '10:00');
+    }
+
     public function test_admin_can_delete_a_teacher_subject_assignment(): void
     {
         [$admin, $teacherId] = $this->createTeacher();

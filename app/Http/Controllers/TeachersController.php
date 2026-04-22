@@ -14,7 +14,7 @@ class TeachersController extends Controller
 {
     public function index(): JsonResponse
     {
-        $data = Teachers::with('user')->get();
+        $data = Teachers::with(['user', 'subjectAssignments.subject'])->get();
         if ($data->isEmpty()) {
             return response()->json(['message' => 'No teachers found.'], 404);
         }
@@ -31,7 +31,7 @@ class TeachersController extends Controller
         $data = Teachers::create($request->validated());
 
         return response()->json([
-            'data' => $data->load('user'),
+            'data' => $data->load(['user', 'subjectAssignments.subject']),
             'message' => 'Teacher created successfully.',
             'status' => 'success',
         ], 201);
@@ -39,7 +39,7 @@ class TeachersController extends Controller
 
     public function show(string $id): JsonResponse
     {
-        $data = Teachers::with('user')->find($id);
+        $data = Teachers::with(['user', 'subjectAssignments.subject'])->find($id);
         if ($data === null) {
             return response()->json(['message' => 'Teacher not found.'], 404);
         }
@@ -60,7 +60,7 @@ class TeachersController extends Controller
         $data->update($request->validated());
 
         return response()->json([
-            'data' => $data->fresh()->load('user'),
+            'data' => $data->fresh()->load(['user', 'subjectAssignments.subject']),
             'message' => 'Teacher updated successfully.',
             'status' => 'success',
         ], 200);
