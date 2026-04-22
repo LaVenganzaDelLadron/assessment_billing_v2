@@ -86,6 +86,7 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
 
     Route::prefix('fee-structures')->controller(FeeStructureController::class)->group(function () {
         Route::get('/', 'index');
+        Route::get('/program-names', 'programNames');
         Route::post('/', 'store');
         Route::get('/{id}', 'show');
         Route::put('/{id}', 'update');
