@@ -21,33 +21,35 @@ class EnrollmentsController extends Controller
             return response()->json(['message' => 'No enrollments found.'], 404);
         }
 
-        $data = $enrollments->map(function (Enrollments $enrollment): array {
+        $grouped = $enrollments->groupBy('student_id')->map(function ($items) {
+
+            $student = $items->first()->student;
+
             return [
-                'enrollment_id' => $enrollment->id,
                 'student' => [
-                    'id' => $enrollment->student?->id,
-                    'student_no' => $enrollment->student?->student_no,
-                    'name' => trim(($enrollment->student?->first_name ?? '').' '.($enrollment->student?->last_name ?? '')),
-                ],
-                'subject' => [
-                    'id' => $enrollment->subject?->id,
-                    'code' => $enrollment->subject?->subject_code,
-                    'name' => $enrollment->subject?->name,
+                    'id' => $student?->id,
+                    'student_no' => $student?->student_no,
+                    'name' => trim(($student?->first_name ?? '') . ' ' . ($student?->last_name ?? '')),
                 ],
                 'academic_term' => [
-                    'id' => $enrollment->academicTerm?->id,
-                    'school_year' => $enrollment->academicTerm?->school_year,
-                    'semester' => $enrollment->academicTerm?->semester,
+                    'id' => $items->first()->academicTerm?->id,
+                    'school_year' => $items->first()->academicTerm?->school_year,
+                    'semester' => $items->first()->academicTerm?->semester,
                 ],
-                'status' => $enrollment->status,
-                'created_at' => $enrollment->created_at,
-                'updated_at' => $enrollment->updated_at,
+                'subjects' => $items->map(function ($enrollment) {
+                    return [
+                        'id' => $enrollment->subject?->id,
+                        'code' => $enrollment->subject?->subject_code,
+                        'name' => $enrollment->subject?->name,
+                        'status' => $enrollment->status,
+                    ];
+                })->values(),
             ];
-        });
+        })->values();
 
         return response()->json([
-            'data' => $data,
-            'message' => 'Enrollments retrieved successfully.',
+            'data' => $grouped,
+            'message' => 'Enrollments grouped successfully.',
             'status' => 'success',
         ], 200);
     }
