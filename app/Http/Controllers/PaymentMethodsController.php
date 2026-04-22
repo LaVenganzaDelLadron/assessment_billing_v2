@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PaymentMethodsRequest;
+use App\Models\PaymentMethod;
 use App\Models\PaymentMethods;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class PaymentMethodsController extends Controller
 {
@@ -14,6 +16,30 @@ class PaymentMethodsController extends Controller
         if ($data->isEmpty()) {
             return response()->json(['message' => 'No payment methods found.'], 404);
         }
+
+        return response()->json([
+            'data' => $data,
+            'message' => 'Payment methods retrieved successfully.',
+            'status' => 'success',
+        ], 200);
+    }
+
+    public function studentIndex(Request $request): JsonResponse
+    {
+        $student = $this->authenticatedStudent($request);
+
+        if ($student === null) {
+            return response()->json(['message' => 'Student not found.'], 404);
+        }
+
+        $data = PaymentMethod::query()
+            ->where('is_active', true)
+            ->get();
+
+        if ($data->isEmpty()) {
+            return response()->json(['message' => 'No payment methods found.'], 404);
+        }
+
         return response()->json([
             'data' => $data,
             'message' => 'Payment methods retrieved successfully.',
@@ -24,6 +50,7 @@ class PaymentMethodsController extends Controller
     public function store(PaymentMethodsRequest $request): JsonResponse
     {
         $data = PaymentMethods::create($request->validated());
+
         return response()->json([
             'data' => $data,
             'message' => 'Payment method created successfully.',
@@ -37,6 +64,30 @@ class PaymentMethodsController extends Controller
         if ($data === null) {
             return response()->json(['message' => 'Payment method not found.'], 404);
         }
+
+        return response()->json([
+            'data' => $data,
+            'message' => 'Payment method retrieved successfully.',
+            'status' => 'success',
+        ], 200);
+    }
+
+    public function studentShow(Request $request, string $id): JsonResponse
+    {
+        $student = $this->authenticatedStudent($request);
+
+        if ($student === null) {
+            return response()->json(['message' => 'Student not found.'], 404);
+        }
+
+        $data = PaymentMethod::query()
+            ->where('is_active', true)
+            ->find($id);
+
+        if ($data === null) {
+            return response()->json(['message' => 'Payment method not found.'], 404);
+        }
+
         return response()->json([
             'data' => $data,
             'message' => 'Payment method retrieved successfully.',
@@ -51,6 +102,7 @@ class PaymentMethodsController extends Controller
             return response()->json(['message' => 'Payment method not found.'], 404);
         }
         $data->update($request->validated());
+
         return response()->json([
             'data' => $data->fresh(),
             'message' => 'Payment method updated successfully.',
@@ -65,6 +117,7 @@ class PaymentMethodsController extends Controller
             return response()->json(['message' => 'Payment method not found.'], 404);
         }
         $data->delete();
+
         return response()->json([
             'message' => 'Payment method deleted successfully.',
             'status' => 'success',

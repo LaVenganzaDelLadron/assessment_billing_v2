@@ -5,9 +5,27 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StudentsRequest;
 use App\Models\Students;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class StudentsController extends Controller
 {
+    public function me(Request $request): JsonResponse
+    {
+        $student = Students::query()
+            ->with(['user', 'program'])
+            ->where('user_id', $request->user()->id)
+            ->first();
+
+        if ($student === null) {
+            return response()->json(['message' => 'Student not found.'], 404);
+        }
+
+        return response()->json([
+            'data' => $student,
+            'message' => 'Student retrieved successfully.',
+            'status' => 'success',
+        ], 200);
+    }
 
     public function index(): JsonResponse
     {
@@ -15,6 +33,7 @@ class StudentsController extends Controller
         if ($data->isEmpty()) {
             return response()->json(['message' => 'No students found.'], 404);
         }
+
         return response()->json([
             'data' => $data,
             'message' => 'Students retrieved successfully.',
@@ -25,6 +44,7 @@ class StudentsController extends Controller
     public function store(StudentsRequest $request): JsonResponse
     {
         $data = Students::create($request->validated());
+
         return response()->json([
             'data' => $data,
             'message' => 'Student created successfully.',
@@ -38,6 +58,7 @@ class StudentsController extends Controller
         if ($data === null) {
             return response()->json(['message' => 'Student not found.'], 404);
         }
+
         return response()->json([
             'data' => $data,
             'message' => 'Student retrieved successfully.',
@@ -52,6 +73,7 @@ class StudentsController extends Controller
             return response()->json(['message' => 'Student not found.'], 404);
         }
         $data->update($request->validated());
+
         return response()->json([
             'data' => $data->fresh(),
             'message' => 'Student updated successfully.',
@@ -66,6 +88,7 @@ class StudentsController extends Controller
             return response()->json(['message' => 'Student not found.'], 404);
         }
         $data->delete();
+
         return response()->json([
             'message' => 'Student deleted successfully.',
             'status' => 'success',

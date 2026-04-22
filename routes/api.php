@@ -254,36 +254,40 @@ Route::middleware(['auth:sanctum', 'teacher'])->prefix('teacher')->group(functio
 // ============================================================================
 Route::middleware(['auth:sanctum', 'student'])->prefix('student')->group(function () {
 
+    Route::prefix('students')->controller(StudentsController::class)->group(function () {
+        Route::get('/me', 'me');
+    });
+
     Route::prefix('enrollments')->controller(EnrollmentsController::class)->group(function () {
-        Route::get('/', 'index');
-        Route::get('/{id}', 'show');
+        Route::get('/', 'studentIndex');
+        Route::get('/{id}', 'studentShow');
     });
 
     Route::prefix('invoices')->controller(InvoicesController::class)->group(function () {
-        Route::get('/', 'index');
-        Route::get('/{id}', 'show');
+        Route::get('/', 'studentIndex');
+        Route::get('/{id}', 'studentShow');
     });
 
     Route::prefix('invoice-lines')->controller(InvoiceLinesController::class)->group(function () {
-        Route::get('/', 'index');
-        Route::get('/{id}', 'show');
+        Route::get('/', 'studentIndex');
+        Route::get('/{id}', 'studentShow');
     });
 
     Route::prefix('official-receipts')->controller(OfficialReceiptsController::class)->group(function () {
-        Route::get('/', 'index');
-        Route::get('/{id}', 'show');
+        Route::get('/', 'studentIndex');
+        Route::get('/{id}', 'studentShow');
     });
 
     Route::prefix('payment-methods')->controller(PaymentMethodsController::class)->group(function () {
-        Route::get('/', 'index');
+        Route::get('/', 'studentIndex');
         Route::post('/', 'store');
-        Route::get('/{id}', 'show');
+        Route::get('/{id}', 'studentShow');
         Route::put('/{id}', 'update');
     });
 
     Route::prefix('payments')->controller(PaymentsController::class)->group(function () {
-        Route::get('/', 'index');
-        Route::get('/{id}', 'show');
+        Route::get('/', 'studentIndex');
+        Route::get('/{id}', 'studentShow');
     });
 
     Route::prefix('profile')->controller(ProfileController::class)->group(function () {
