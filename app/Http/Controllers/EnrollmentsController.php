@@ -11,16 +11,47 @@ class EnrollmentsController extends Controller
 
     public function index(): JsonResponse
     {
-        $data = Enrollments::all();
-        if ($data->isEmpty()) {
+        $enrollments = Enrollments::with([
+            'student:id,student_no,first_name,last_name',
+            'subject:id,name,subject_code',
+            'academicTerm:id,school_year,semester',
+        ])->get();
+
+        if ($enrollments->isEmpty()) {
             return response()->json(['message' => 'No enrollments found.'], 404);
         }
+
+        $data = $enrollments->map(function (Enrollments $enrollment): array {
+            return [
+                'enrollment_id' => $enrollment->id,
+                'student' => [
+                    'id' => $enrollment->student?->id,
+                    'student_no' => $enrollment->student?->student_no,
+                    'name' => trim(($enrollment->student?->first_name ?? '').' '.($enrollment->student?->last_name ?? '')),
+                ],
+                'subject' => [
+                    'id' => $enrollment->subject?->id,
+                    'code' => $enrollment->subject?->subject_code,
+                    'name' => $enrollment->subject?->name,
+                ],
+                'academic_term' => [
+                    'id' => $enrollment->academicTerm?->id,
+                    'school_year' => $enrollment->academicTerm?->school_year,
+                    'semester' => $enrollment->academicTerm?->semester,
+                ],
+                'status' => $enrollment->status,
+                'created_at' => $enrollment->created_at,
+                'updated_at' => $enrollment->updated_at,
+            ];
+        });
+
         return response()->json([
             'data' => $data,
             'message' => 'Enrollments retrieved successfully.',
             'status' => 'success',
         ], 200);
     }
+
 
     public function store(EnrollmentsRequest $request): JsonResponse
     {
